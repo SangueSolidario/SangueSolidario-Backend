@@ -1,6 +1,6 @@
 $do_github=$args[0]
 $resource_name="apibackend"
-$apim_name="apimbackend"
+$apim_name="sanguesolidario"
 $apim_id="apisanguesolidario"
 $location="uksouth"
 $email="tiagomartins1@ipcbcampus.pt"
@@ -55,14 +55,35 @@ if($LASTEXITCODE -ne 0){
 
 # Configurar Github Actions
 if($do_github){
-    $github_repo="ttiagojm/SangueSolidarioBack"
+    $github_repo="SangueSolidario/SangueSolidarioBack"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
     echo "Adicionar Github Actions ignorado"
 }
 
+# Verificar se a webapp está ON
+$app_service_url="https://${webapp}.azurewebsites.net"
+$openapi_url="${app_service_url}/swagger/v1/swagger"
+
+while ($true) {
+    $pingResult = Test-Connection -ComputerName "${webapp}.azurewebsites.net/swagger/v1/swagger" -Count 1 -ErrorAction SilentlyContinue
+    if ($pingResult -ne $null) {
+        Write-Host "WebApp ON"
+        break
+    }
+    Write-Host "WebApp não respondeu..."
+    Start-Sleep -Milliseconds 5000
+}
+
 # Atribuir AppService à API openAPI
 $api_name="sanguesolidarioapi"
-$app_service_url="https://${webapp}.azurewebsites.net"
-$openapi_url="${app_service_url}/api"
-az apim api import --api-id $api_name -g $resource_name --display-name $api_name --path "/api" -n $apim_name --specification-format Swagger --specification-url $openapi_url
+az apim api import `
+    --api-id $api_name `
+    --resource-group $resource_name `
+    --service-name $apim_name `
+    --path "/api" `
+    --specification-format "Swagger" `
+    --specification-url "$openapi_url" `
+    --display-name $api_name `
+    --api-type "http" `
+    --protocols "https"
