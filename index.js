@@ -5,16 +5,6 @@ const swaggerSpec = require("./swagger");
 const app = express();
 const port = process.env.PORT || 3000;
 
-/**
-* @openapi
-* /api-docs:
-*   get:
-*       responses:
-*           200:
-*               description: Sucesso
-*           500:
-*               description: Erro no servidor
-*/
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 app.get("/api/swagger.json", (req, res) => {
