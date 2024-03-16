@@ -1,4 +1,8 @@
-$do_github=$args[0]
+# Flag (-github) para definir se quere-se conectar, pele primeir vez, ao Github Actions
+param(
+    [Parameter(HelpMessage="Criar Github Actions")]
+    [switch]$github = $False
+)
 $resource_name="apibackend"
 $apim_name="sanguesolidario"
 $apim_id="apisanguesolidario"
@@ -54,7 +58,7 @@ if($LASTEXITCODE -ne 0){
 }
 
 # Configurar Github Actions
-if($do_github){
+if($github){
     $github_repo="SangueSolidario/SangueSolidarioBack"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
@@ -63,12 +67,12 @@ if($do_github){
 
 # Verificar se a webapp está ON
 $app_service_url="https://${webapp}.azurewebsites.net"
-$openapi_url="${app_service_url}/swagger/v1/swagger"
+$openapi_url="${app_service_url}/api"
 
 while ($true) {
-    $pingResult = Test-Connection -ComputerName "${webapp}.azurewebsites.net/swagger/v1/swagger" -Count 1 -ErrorAction SilentlyContinue
-    if ($pingResult -ne $null) {
-        Write-Host "WebApp ON"
+    $ping = Test-Connection -ComputerName "${webapp}.azurewebsites.net" -Count 1 -ErrorAction SilentlyContinue
+    if ($ping -ne $null) {
+        Write-Host "WebApp pronta!"
         break
     }
     Write-Host "WebApp não respondeu..."
