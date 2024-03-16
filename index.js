@@ -1,9 +1,23 @@
 const express = require("express");
-const app = express()
+const swaggerUI = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+
+const app = express();
 const port = process.env.PORT || 3000;
 
-// TODO - Documentar com Swagger openAPI
+app.use("/api", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
+/**
+* @openapi
+* /campanhas:
+*   get:
+*       summary: Obtém todas as campanhas disponíveis
+*       responses:
+*           200:
+*               description: Sucesso
+*           500:
+*               description: Erro no servidor
+*/
 app.get("/campanhas", (req, res) => {
     try{
         
@@ -19,7 +33,7 @@ app.get("/campanhas", (req, res) => {
             "Status": "Ativa"
         });
     } catch(error){
-        return res.status(500).json({"message": error});
+        return res.status(500).json({"mensagem": error});
     }
 });
 
