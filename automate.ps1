@@ -59,6 +59,8 @@ if($LASTEXITCODE -ne 0){
 
 # Configurar Github Actions
 if($github){
+    # Esperar 1 mnuto pela webapp
+    Start-Sleep -Milliseconds 60000
     $github_repo="SangueSolidario/SangueSolidarioBack"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
@@ -67,17 +69,10 @@ if($github){
 
 # Verificar se a webapp está ON
 $app_service_url="https://${webapp}.azurewebsites.net"
-$openapi_url="${app_service_url}/api"
+$openapi_url="${app_service_url}/api/swagger.json"
 
-while ($true) {
-    $ping = Test-Connection -ComputerName "${webapp}.azurewebsites.net" -Count 1 -ErrorAction SilentlyContinue
-    if ($ping -ne $null) {
-        Write-Host "WebApp pronta!"
-        break
-    }
-    Write-Host "WebApp não respondeu..."
-    Start-Sleep -Milliseconds 5000
-}
+# Esperar 3 minutos
+Start-Sleep -Milliseconds 180000
 
 # Atribuir AppService à API openAPI
 $api_name="sanguesolidarioapi"
