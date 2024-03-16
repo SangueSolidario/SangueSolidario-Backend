@@ -86,3 +86,4 @@ az apim api import `
     --display-name $api_name `
     --api-type "http" `
     --protocols "https"
+    --subscription-required false
