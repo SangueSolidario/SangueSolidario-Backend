@@ -2,13 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
     "dev": "nodemon --env-file=.env ./src/index.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@azure/cosmos": "^4.0.0",
     "@azure/identity": "^4.0.1",

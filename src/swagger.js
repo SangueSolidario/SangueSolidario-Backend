@@ -11,7 +11,7 @@ const swaggerDefinition = {
 
 const options = {
     swaggerDefinition,
-    apis: ["./*.js"]     // Ficheiros onde encontrar funções anotadas com a definição acima
+    apis: ["./src/*.js"]     // Ficheiros onde encontrar funções anotadas com a definição acima
 };
 
 const swaggerSpec = swaggerJSDoc(options);

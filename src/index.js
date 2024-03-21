@@ -21,6 +21,7 @@ const dao = new ReqDao(
 // Iniciar o RequestDBDao
 dao.init();
 
+console.log(swaggerSpec)
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Para o APIM poder obter as rotas criadas pelo Swagger
@@ -49,9 +50,34 @@ app.get("/campanhas", async (req, res) => {
     }
 });
 
+/**
+* @openapi
+* /familiares/{id}:
+*   get:
+*       summary: Obtém todos os familiares de um doador
+*       parameters:
+*           - in: path
+*             name: id
+*             required: true
+*             schema:
+*               type: int
+*             description: ID do doador
+*       responses:
+*           200:
+*               description: Sucesso
+*           404:
+*               description: Não encontrou doador
+*           500:
+*               description: Erro no servidor
+*/
 app.get("/familiares/:id", async (req, res) => {
     try{
-        return res.status(200).json(await dao.getFamiliares(req.params.id));
+        const familiares = await dao.getFamiliares(req.params.id);
+
+        if(familiares.length == 0)
+            return res.status(404).json({"mensagem": "Não existe doador com esse ID"});
+        return res.status(200).json();
+
     } catch(error){
         console.log(error)
         return res.status(500).json({"mensagem": "Erro no servidor!"});
