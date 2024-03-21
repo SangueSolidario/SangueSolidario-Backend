@@ -93,14 +93,21 @@ az group wait --exists --resource-group $resource_name
 $cosmos_name="mycosmosbd1"
 $db_name="Sangue"
 
-az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind GlobalDocumentDB --public-network-access DISABLED
+# az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind GlobalDocumentDB --public-network-access DISABLED
 
-az cosmosdb sql database create --account-name $cosmos_name --resource-group $resource_name --name $db_name
+# az cosmosdb sql database create --account-name $cosmos_name --resource-group $resource_name --name $db_name
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /ID
+# az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /ID
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /ID
+# az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /ID
 
-#az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /ID_Doador
+# #az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /ID_Doador
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name notificacoesContainer --partition-key-path /ID_Doador
+# az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name notificacoesContainer --partition-key-path /ID_Doador
+
+# Obter a chave primária
+$primaryKey = az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv
+# Obter .env e trocar o valor da KEY pela nova KEY criada
+$content = Get-Content ".env"
+$new_content = $content -replace 'KEY=.*', "KEY=$primaryKey"
+$new_content | Set-Content ".env"

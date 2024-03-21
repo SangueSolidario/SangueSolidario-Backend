@@ -76,7 +76,7 @@ app.get("/familiares/:id", async (req, res) => {
 
         if(familiares.length == 0)
             return res.status(404).json({"mensagem": "Não existe doador com esse ID"});
-        return res.status(200).json();
+        return res.status(200).json(familiares[0]);
 
     } catch(error){
         console.log(error)
