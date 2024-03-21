@@ -1,0 +1,24 @@
+[
+    {
+        "ID": "1",
+        "Nome": "Campanha 1",
+        "DataInicio": "2022-01-01",
+        "DataFim": "2022-01-31",
+        "Imagem": "Url para Blob Storage 1",
+        "Descricao": "Descrição da Campanha 1",
+        "TiposSanguineoNecessario": ["A+", "B+"],
+        "Coordenadas": ["8.19123", "15.81321"],
+        "Status": "Ativa"
+    },
+    {
+        "ID": "2",
+        "Nome": "Campanha 2",
+        "DataInicio": "2022-02-01",
+        "DataFim": "2022-02-28",
+        "Imagem": "Url para Blob Storage 2",
+        "Descricao": "Descrição da Campanha 2",
+        "TiposSanguineoNecessario": ["O-", "AB+"],
+        "Coordenadas": ["5.44084", "93.57508"],
+        "Status": "Ativa"
+    }
+]

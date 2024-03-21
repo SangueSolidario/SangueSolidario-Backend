@@ -1,0 +1,20 @@
+[
+    {
+        "ID": "1",
+        "Nome": "Doador 1",
+        "Email": "joao@gmail.com",
+        "TipoSanguineo": "A+",
+        "DataNascimento": "1990-01-01",
+        "Doacoes": ["1", "2"],
+        "Feedback": "Campanha 1: Doação realizada com sucesso!"
+    },
+    {
+        "ID": "2",
+        "Nome": "Doador 2",
+        "Email": "maria@gmail.com",
+        "TipoSanguineo": "B+",
+        "DataNascimento": "1992-02-02",
+        "Doacoes": ["3", "4"],
+        "Feedback": "Campanha 3: Doação realizada com sucesso!"
+    }
+]

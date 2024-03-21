@@ -93,7 +93,7 @@ az apim api import `
 $cosmos_name="mycosmosbd1"
 $db_name="Sangue"
 
-az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind GlobalDocumentDB
+az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind GlobalDocumentDB --public-network-access DISABLED
 
 az cosmosdb sql database create --account-name $cosmos_name --resource-group $resource_name --name $db_name
 

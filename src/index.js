@@ -1,12 +1,29 @@
+const { CosmosClient } = require("@azure/cosmos");
 const express = require("express");
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
+const ReqDao = require("./db");
 
+// Express APP
 const app = express();
 const port = process.env.PORT || 3000;
 
+// CosmosDB
+const endpoint = process.env.HOST;
+const key = process.env.AUTH_KEY;
+const client = new CosmosClient({ endpoint, key });
+const dao = new ReqDao(
+    client, process.env.DB, 
+    process.env.CAMPANHA, process.env.DOADOR, 
+    process.env.FAMILIAR, process.env.NOTIFY,
+);
+
+// Iniciar o RequestDBDao
+dao.init();
+
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
+// Para o APIM poder obter as rotas criadas pelo Swagger
 app.get("/api/swagger.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(swaggerSpec);
@@ -23,6 +40,7 @@ app.get("/api/swagger.json", (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
+
 app.get("/campanhas", (req, res) => {
     try{
         
