@@ -62,9 +62,9 @@ if($LASTEXITCODE -ne 0){
 
 # Configurar Github Actions
 if($github){
-    # Esperar 3 minutos pela webapp
-    echo "A dormir por 3 minutos"
-    Start-Sleep -Milliseconds 180000
+    # Esperar 7 minutos pela webapp
+    echo "A dormir por 7 minutos"
+    Start-Sleep -Milliseconds 420000
     $github_repo="SangueSolidario/SangueSolidarioBack"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
@@ -85,6 +85,7 @@ az apim api import `
     --api-id $api_name `
     --resource-group $resource_name `
     --service-name $apim_name `
+    --service-url $app_service_url `
     --path "/api" `
     --specification-format "OpenApi" `
     --specification-url "$openapi_url" `
