@@ -2,14 +2,13 @@ const rf = require("./utils");
 
 class RequestDBDao{
 
-    constructor(client, database, campanha, doador, familiar, notificao){
+    constructor(client, database, campanha, doador, notificao){
         this.client = client;
         this.databaseId = database;
 
         // ID's dos Containers 
         this.campanhaId = campanha;
         this.doadorId = doador;
-        this.familiarId = familiar;
         this.notificaoId = notificao;
         
         // Objetos dos Containers e Base de dados
@@ -27,7 +26,7 @@ class RequestDBDao{
         this.database = db.database;
         console.log(`Base de Dados ${this.databaseId} carregada!\n`);
 
-        for(const containerId of [this.campanhaId, this.familiarId, this.doadorId, this.notificaoId]){
+        for(const containerId of [this.campanhaId, this.doadorId, this.notificaoId]){
             const container = await this.database.containers.createIfNotExists({id: containerId});
             this.containers[containerId] = container.container;
             console.log(`Container ${containerId} carregado!\n`);

@@ -15,7 +15,7 @@ const client = new CosmosClient({ endpoint, key });
 const dao = new ReqDao(
     client, process.env.DB, 
     process.env.CAMPANHA, process.env.DOADOR, 
-    process.env.FAMILIAR, process.env.NOTIFY,
+    process.env.NOTIFY
 );
 
 // Iniciar o RequestDBDao
