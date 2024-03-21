@@ -43,6 +43,42 @@ class RequestDBDao{
             }
         }
     }
+
+    /**
+     * Função que obtém os dados de todas as campanhas
+     */
+    async getCampanhas(){
+        try{
+            const querySpec = {
+                query: `SELECT c.ID, c.Nome, c.DataInicio, 
+                        c.DataFim, c.Imagem, c.Descricao,
+                        c.TiposSanguineoNecessario, c.Coordenadas,
+                        c.Status FROM c`
+            };
+            
+            const data = await this.containers[this.campanhaId].items.query(querySpec).fetchAll();
+            return data.resources;
+        } catch(err){
+            throw err;
+        }
+    }
+
+    async getFamiliares(idDoador){
+        try{
+            const querySpec = {
+                query: `SELECT c.Familiares FROM c WHERE c.ID=@idDoador`,
+                parameters: [{
+                    name: "@idDoador",
+                    value: idDoador
+                }]
+            };
+            
+            const data = await this.containers[this.doadorId].items.query(querySpec).fetchAll();
+            return data.resources;
+        } catch(err){
+            throw err;
+        }
+    }
 }
 
 module.exports = RequestDBDao;

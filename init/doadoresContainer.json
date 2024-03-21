@@ -6,7 +6,16 @@
         "TipoSanguineo": "A+",
         "DataNascimento": "1990-01-01",
         "Doacoes": ["1", "2"],
-        "Feedback": "Campanha 1: Doação realizada com sucesso!"
+        "Feedback": ["Campanha 1: Doação realizada com sucesso!"],
+        "Familiares": [
+            {
+                "ID_Familiar": "2",
+                "ID_Doador": "2",
+                "NomeFamiliar": "Maria",
+                "TipoSanguineo": "B+",
+                "Parentesco": "Tia"
+            }
+        ]
     },
     {
         "ID": "2",
@@ -15,6 +24,15 @@
         "TipoSanguineo": "B+",
         "DataNascimento": "1992-02-02",
         "Doacoes": ["3", "4"],
-        "Feedback": "Campanha 3: Doação realizada com sucesso!"
+        "Feedback": ["Campanha 3: Doação realizada com sucesso!"],
+        "Familiares": [
+            {
+                "ID_Familiar": "1",
+                "ID_Doador": "1",
+                "NomeFamiliar": "João",
+                "TipoSanguineo": "A+",
+                "Parentesco": "Sobrinho"
+            }
+        ]
     }
 ]

@@ -101,6 +101,6 @@ az cosmosdb sql container create --account-name $cosmos_name --database-name $db
 
 az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /ID
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /ID_Doador
+#az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /ID_Doador
 
 az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name notificacoesContainer --partition-key-path /ID_Doador

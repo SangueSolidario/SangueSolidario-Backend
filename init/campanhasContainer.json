@@ -7,7 +7,7 @@
         "Imagem": "Url para Blob Storage 1",
         "Descricao": "Descrição da Campanha 1",
         "TiposSanguineoNecessario": ["A+", "B+"],
-        "Coordenadas": ["8.19123", "15.81321"],
+        "Coordenadas": {"lat": "8.19123", "lon": "15.81321"},
         "Status": "Ativa"
     },
     {
@@ -18,7 +18,7 @@
         "Imagem": "Url para Blob Storage 2",
         "Descricao": "Descrição da Campanha 2",
         "TiposSanguineoNecessario": ["O-", "AB+"],
-        "Coordenadas": ["5.44084", "93.57508"],
+        "Coordenadas": {"lat": "5.44084", "lon":"93.57508"},
         "Status": "Ativa"
     }
 ]

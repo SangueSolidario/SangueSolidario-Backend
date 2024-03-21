@@ -40,23 +40,21 @@ app.get("/api/swagger.json", (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-
-app.get("/campanhas", (req, res) => {
+app.get("/campanhas", async (req, res) => {
     try{
-        
-        return res.status(200).json({
-            "ID": "1",
-            "Nome": "Campanha 1",
-            "DataInicio": "2017-01-01",
-            "DataFim": "2017-01-31",
-            "Imagem": "Url para Blob Storage",
-            "Descricao": "Campanha 1",
-            "TiposSanguineoNecessario": ["A+", "B+"],
-            "Local": "Local 1",
-            "Status": "Ativa"
-        });
+        return res.status(200).json(await dao.getCampanhas());
     } catch(error){
-        return res.status(500).json({"mensagem": error});
+        console.log(error)
+        return res.status(500).json({"mensagem": "Erro no servidor!"});
+    }
+});
+
+app.get("/familiares/:id", async (req, res) => {
+    try{
+        return res.status(200).json(await dao.getFamiliares(req.params.id));
+    } catch(error){
+        console.log(error)
+        return res.status(500).json({"mensagem": "Erro no servidor!"});
     }
 });
 

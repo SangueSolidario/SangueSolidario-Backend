@@ -3,12 +3,14 @@
         "ID": "1",
         "ID_Doador": "1",
         "NomeFamiliar": "João",
-        "TipoSanguineo": "A+"
+        "TipoSanguineo": "A+",
+        "Parentesco": "Pai"
     },
     {
         "ID": "2",
         "ID_Doador": "2",
         "NomeFamiliar": "Maria",
-        "TipoSanguineo": "B+"
+        "TipoSanguineo": "B+",
+        "Parentesco": "Tia"
     }
 ]
