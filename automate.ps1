@@ -1,7 +1,10 @@
 # Flag (-github) para definir se quere-se conectar, pele primeir vez, ao Github Actions
 param(
     [Parameter(HelpMessage="Criar Github Actions")]
-    [switch]$github = $False
+    [switch]$github = $False,
+
+    [Parameter(HelpMessage="Criar variáveis de ambiente")]
+    [switch]$createVars = $False
 )
 $resource_name="apibackend"
 $apim_name="sanguesolidario"
@@ -114,12 +117,13 @@ $new_content = $new_content -replace 'DB=.*', "DB=$db_name"
 $new_content | Set-Content ".env"
 
 # Set KEY=VALUE do .env nas variáveis de ambiente da webapp
-Get-Content .env | ForEach-Object {
-    $pair = $_ -split "="
-    $settingName = $pair[0].Trim()
-    $settingValue = $pair[1].Trim()
-    az webapp config appsettings set --name $webapp --resource-group $resource_name --settings "$settingName=$settingValue"
+if($createVars){
+    Get-Content .env | ForEach-Object {
+        $pair = $_ -split "="
+        $settingName = $pair[0].Trim()
+        $settingValue = $pair[1].Trim()
+        az webapp config appsettings set --name $webapp --resource-group $resource_name --settings "$settingName=$settingValue"
+    }
 }
-
 # Reinicar webapp para garantir que as variáveis ficam definidas
 az webapp restart --name $webapp --resource-group $resource_name

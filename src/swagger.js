@@ -1,7 +1,7 @@
 const swaggerJSDoc = require("swagger-jsdoc");
 
 const swaggerDefinition = {
-    swagger: "2.0",
+    openapi: "3.1.0",
     info: {
         title: "SangueSolidario",
         version: "1.0.0",
