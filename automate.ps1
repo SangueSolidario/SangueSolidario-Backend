@@ -86,7 +86,7 @@ az apim api import `
     --resource-group $resource_name `
     --service-name $apim_name `
     --path "/api" `
-    --specification-format "Swagger" `
+    --specification-format "OpenApi" `
     --specification-url "$openapi_url" `
     --display-name $api_name `
     --api-type "http" `
