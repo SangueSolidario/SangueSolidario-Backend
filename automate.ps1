@@ -12,6 +12,7 @@ $apim_id="apisanguesolidario"
 $location="uksouth"
 $email="tiagomartins1@ipcbcampus.pt"
 $organization="SangueSolidario"
+$webapp="webapp-sanguesolidario"
 
 # Criar grupo de recursos
 if( (az group exists --name $resource_name) -eq $false){
@@ -49,8 +50,6 @@ if($LASTEXITCODE -ne 0){
     az appservice plan create --name $servico_app --resource-group $resource_name --sku B1 --is-linux
 }
 
-$webapp="webapp-sanguesolidario"
-
 # Se der erro o $LASTEXITCODE não será 0
 az webapp show --name $webapp --resource-group $resource_name
 
@@ -62,9 +61,9 @@ if($LASTEXITCODE -ne 0){
 
 # Configurar Github Actions
 if($github){
-    # Esperar 7 minutos pela webapp
-    echo "A dormir por 7 minutos"
-    Start-Sleep -Milliseconds 420000
+    # Esperar 30 segundos pela webapp
+    echo "A dormir por 30 segundos"
+    Start-Sleep -Milliseconds 30000
     $github_repo="SangueSolidario/SangueSolidarioBack"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
@@ -75,9 +74,9 @@ if($github){
 $app_service_url="https://${webapp}.azurewebsites.net"
 $openapi_url="${app_service_url}/api/swagger.json"
 
-# Esperar 3 minutos
-echo "A dormir por 3 minutos"
-Start-Sleep -Milliseconds 180000
+# Esperar 30 segundos
+echo "A dormir por 30 segundos"
+Start-Sleep -Milliseconds 30000
 
 # Atribuir AppService à API openAPI
 $api_name="sanguesolidarioapi"
@@ -101,13 +100,9 @@ az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind Gl
 
 az cosmosdb sql database create --account-name $cosmos_name --resource-group $resource_name --name $db_name
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /ID
+az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /campanha_id -u '{""uniqueKeys"": [{""paths"": [""/campanha_id""]}]}'
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /ID
-
-#az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /ID_Doador
-
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name notificacoesContainer --partition-key-path /ID_Doador
+az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /Email -u '{""uniqueKeys"": [{""paths"": [""/Email""]}]}'
 
 # Obter a chave primária
 $primaryKey = az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv
@@ -119,6 +114,7 @@ $new_content | Set-Content ".env"
 
 # Set KEY=VALUE do .env nas variáveis de ambiente da webapp
 if($createVars){
+    echo "A criar variáveis de ambiente"
     Get-Content .env | ForEach-Object {
         $pair = $_ -split "="
         $settingName = $pair[0].Trim()

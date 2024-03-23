@@ -3,6 +3,7 @@ const express = require("express");
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 const ReqDao = require("./db");
+const rf = require("./utils");
 
 // Express APP
 const app = express();
@@ -14,14 +15,12 @@ const key = process.env.AUTH_KEY;
 const client = new CosmosClient({ endpoint, key });
 const dao = new ReqDao(
     client, process.env.DB, 
-    process.env.CAMPANHA, process.env.DOADOR, 
-    process.env.NOTIFY
+    process.env.CAMPANHA, process.env.DOADOR
 );
 
 // Iniciar o RequestDBDao
 dao.init();
-
-console.log(swaggerSpec)
+app.use(express.json())
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Para o APIM poder obter as rotas criadas pelo Swagger
@@ -52,27 +51,42 @@ app.get("/campanhas", async (req, res) => {
 
 /**
 * @openapi
-* /familiares/{id}:
-*   get:
+* /familiares:
+*   post:
 *       summary: Obtém todos os familiares de um doador
-*       parameters:
-*           - in: path
-*             name: id
-*             required: true
-*             schema:
-*               type: int
-*             description: ID do doador
+*       consumes:
+*           - application/json
+*       produces:
+*           - application/json
+*       requestBody:
+*           required: true
+*           content:
+*               application/json:
+*                   schema:
+*                       type: object
+*                       required:
+*                           - email
+*                       properties:
+*                           email:
+*                               type: string
 *       responses:
 *           200:
 *               description: Sucesso
+*           400:
+*               description: Email inválido
 *           404:
 *               description: Não encontrou doador
 *           500:
 *               description: Erro no servidor
 */
-app.get("/familiares/:id", async (req, res) => {
+app.post("/familiares", async (req, res) => {
     try{
-        const familiares = await dao.getFamiliares(req.params.id);
+        
+        // Validate if it's a valid email
+        if(!rf.isEmail(req.body.email))
+            return res.status(400).json({"mensagem": "Email inválido"});
+
+        const familiares = await dao.getFamiliares(req.body.email);
 
         if(familiares.length == 0)
             return res.status(404).json({"mensagem": "Não existe doador com esse ID"});
@@ -80,6 +94,50 @@ app.get("/familiares/:id", async (req, res) => {
 
     } catch(error){
         console.log(error)
+        return res.status(500).json({"mensagem": "Erro no servidor!"});
+    }
+});
+
+/**
+* @openapi
+* /familiares:
+*   post:
+*       summary: Obtém todos os familiares de um doador
+*       consumes:
+*           - application/json
+*       produces:
+*           - application/json
+*       requestBody:
+*           required: true
+*           content:
+*               application/json:
+*                   schema:
+*                       type: object
+*                       required:
+*                           - email
+*                       properties:
+*                           email:
+*                               type: string
+*       responses:
+*           201:
+*               description: Criado com Sucesso
+*           204:
+*               description: Atualizado com Sucesso
+*           400:
+*               description: Email inválido
+*           404:
+*               description: Não encontrou doador
+*           500:
+*               description: Erro no servidor
+*/
+app.post("/campanha", async (req, res) => {
+
+    try{
+        const data = await dao.postCampanha(req.body);
+        console.log(data);
+        return res.status(200).json({"mensagem": "Funca!"});
+    } catch(err){
+        console.log(error);
         return res.status(500).json({"mensagem": "Erro no servidor!"});
     }
 });

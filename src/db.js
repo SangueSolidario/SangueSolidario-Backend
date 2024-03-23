@@ -2,14 +2,13 @@ const rf = require("./utils");
 
 class RequestDBDao{
 
-    constructor(client, database, campanha, doador, notificao){
+    constructor(client, database, campanha, doador){
         this.client = client;
         this.databaseId = database;
 
         // ID's dos Containers 
         this.campanhaId = campanha;
         this.doadorId = doador;
-        this.notificaoId = notificao;
         
         // Objetos dos Containers e Base de dados
         this.database = null
@@ -26,7 +25,7 @@ class RequestDBDao{
         this.database = db.database;
         console.log(`Base de Dados ${this.databaseId} carregada!\n`);
 
-        for(const containerId of [this.campanhaId, this.doadorId, this.notificaoId]){
+        for(const containerId of [this.campanhaId, this.doadorId]){
             const container = await this.database.containers.createIfNotExists({id: containerId});
             this.containers[containerId] = container.container;
             console.log(`Container ${containerId} carregado!\n`);
@@ -62,18 +61,27 @@ class RequestDBDao{
         }
     }
 
-    async getFamiliares(idDoador){
+    async getFamiliares(email){
         try{
             const querySpec = {
-                query: `SELECT c.Familiares FROM c WHERE c.ID=@idDoador`,
+                query: `SELECT c.Familiares FROM c WHERE c.Email=@email`,
                 parameters: [{
-                    name: "@idDoador",
-                    value: idDoador
+                    name: "@email",
+                    value: email
                 }]
             };
             
             const data = await this.containers[this.doadorId].items.query(querySpec).fetchAll();
             return data.resources;
+        } catch(err){
+            throw err;
+        }
+    }
+
+    async postCampanha(data){
+        try{
+            //
+
         } catch(err){
             throw err;
         }
