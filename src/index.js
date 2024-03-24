@@ -35,8 +35,6 @@ app.get("/api/swagger.json", (req, res) => {
 * /campanhas:
 *   get:
 *       summary: Obtém todas as campanhas disponíveis
-*       produces:
-*           - application/json
 *       responses:
 *           200:
 *               description: Sucesso
