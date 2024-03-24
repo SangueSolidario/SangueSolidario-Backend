@@ -58,10 +58,6 @@ app.get("/campanhas", async (req, res) => {
 * /campanha:
 *   post:
 *       summary: Cria uma Campanha
-*       consumes:
-*           - application/json
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -123,8 +119,6 @@ app.post("/campanha", async (req, res) => {
 * /campanha:
 *   delete:
 *       summary: Elimina uma Campanha
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -169,10 +163,6 @@ app.delete("/campanha", async (req, res) => {
 * /doador:
 *   post:
 *       summary: Cria/Atualiza um Doador
-*       consumes:
-*           - application/json
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -226,8 +216,6 @@ app.post("/doador", async (req, res) => {
 * /doador:
 *   delete:
 *       summary: Elimina um Doador
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -273,10 +261,6 @@ app.delete("/doador", async (req, res) => {
 * /doador/campanha:
 *   post:
 *       summary: Adiciona Doador a Campanha
-*       consumes:
-*           - application/json
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -326,10 +310,6 @@ app.post("/doador/campanha", async (req, res) => {
 * /familiares:
 *   post:
 *       summary: Obtém todos os familiares de um doador
-*       consumes:
-*           - application/json
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -373,10 +353,6 @@ app.post("/familiares", async (req, res) => {
 * /familiar:
 *   post:
 *       summary: Adicionar/Atualizar Familiar
-*       consumes:
-*           - application/json
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:
@@ -429,8 +405,6 @@ app.post("/familiar", async (req, res) => {
 * /familiar:
 *   delete:
 *       summary: Elimina um Familiar
-*       produces:
-*           - application/json
 *       requestBody:
 *           required: true
 *           content:

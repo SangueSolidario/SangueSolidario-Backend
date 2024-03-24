@@ -64,7 +64,7 @@ if($github){
     # Esperar 30 segundos pela webapp
     echo "A dormir por 30 segundos"
     Start-Sleep -Milliseconds 30000
-    $github_repo="SangueSolidario/SangueSolidarioBack"
+    $github_repo="SangueSolidario/SangueSolidario-Backend"
     az webapp deployment github-actions add --repo $github_repo -g $resource_name -n $webapp -b main --login-with-github
 } else{
     echo "Adicionar Github Actions ignorado"
