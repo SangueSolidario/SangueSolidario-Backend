@@ -100,9 +100,11 @@ az cosmosdb create --name $cosmos_name --resource-group $resource_name --kind Gl
 
 az cosmosdb sql database create --account-name $cosmos_name --resource-group $resource_name --name $db_name
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /campanha_id -u '{""uniqueKeys"": [{""paths"": [""/campanha_id""]}]}'
+az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name campanhasContainer --partition-key-path /Nome
 
-az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /Email -u '{""uniqueKeys"": [{""paths"": [""/Email""]}]}'
+az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name doadoresContainer --partition-key-path /email -u '{""uniqueKeys"": [{""paths"": [""/email""]}]}'
+
+az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /email_doador
 
 # Obter a chave primária
 $primaryKey = az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv

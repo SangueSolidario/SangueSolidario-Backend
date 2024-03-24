@@ -1,6 +1,5 @@
 [
     {
-        "campanha_id": "cb2024",
         "Nome": "Campanha 1",
         "DataInicio": "2022-01-01",
         "DataFim": "2022-01-31",
@@ -8,10 +7,10 @@
         "Descricao": "Descrição da Campanha 1",
         "TiposSanguineoNecessario": ["A+", "B+"],
         "Coordenadas": {"lat": "8.19123", "lon": "15.81321"},
-        "Status": "Ativa"
+        "Status": "Ativa",
+        "Cidade": "Castelo Branco"
     },
     {
-        "campanha_id": "lisbon2013",
         "Nome": "Campanha 2",
         "DataInicio": "2022-02-01",
         "DataFim": "2022-02-28",
@@ -19,6 +18,7 @@
         "Descricao": "Descrição da Campanha 2",
         "TiposSanguineoNecessario": ["O-", "AB+"],
         "Coordenadas": {"lat": "5.44084", "lon":"93.57508"},
-        "Status": "Ativa"
+        "Status": "Ativa",
+        "Cidade": "Lisboa"
     }
 ]

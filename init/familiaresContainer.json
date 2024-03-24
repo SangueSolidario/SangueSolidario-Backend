@@ -1,0 +1,20 @@
+[
+    {
+        "NomeFamiliar": "João",
+        "TipoSanguineo": "A+",
+        "Parentesco": "Sobrinho",
+        "email_doador": "maria@gmail.com"
+    },
+    {
+        "NomeFamiliar": "Gonçalo",
+        "TipoSanguineo": "O-",
+        "Parentesco": "Filho",
+        "email_doador": "maria@gmail.com"
+    },
+    {
+        "NomeFamiliar": "Maria",
+        "TipoSanguineo": "B+",
+        "Parentesco": "Tia",
+        "email_doador": "joao@gmail.com"
+    }
+]

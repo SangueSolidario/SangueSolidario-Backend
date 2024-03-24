@@ -14,4 +14,20 @@ function isEmail(email){
     return emailRegex.test(email);
 }
 
-module.exports = { readJson, isEmail };
+function keepFields(obj, ...props){
+    return props.reduce((res, prop) => {
+        res[prop] = obj[prop];
+        return res;
+    }, {});
+}   
+
+function remFields(obj, ...props){
+    const res = {...obj};
+
+    props.forEach((prop) => {
+        delete res[prop];
+    });
+    return res;
+}   
+
+module.exports = { readJson, isEmail, keepFields, remFields };

@@ -1,32 +1,16 @@
 [
     {
         "Nome": "Doador 1",
-        "Email": "joao@gmail.com",
+        "email": "joao@gmail.com",
         "TipoSanguineo": "A+",
         "DataNascimento": "1990-01-01",
-        "Doacoes": ["cb2024", "lisbon2013"],
-        "Feedback": ["Campanha 1: Doação realizada com sucesso!"],
-        "Familiares": [
-            {
-                "NomeFamiliar": "Maria",
-                "TipoSanguineo": "B+",
-                "Parentesco": "Tia"
-            }
-        ]
+        "Feedback": ["Campanha 1: Doação realizada com sucesso!"]
     },
     {
         "Nome": "Doador 2",
-        "Email": "maria@gmail.com",
+        "email": "maria@gmail.com",
         "TipoSanguineo": "B+",
         "DataNascimento": "1992-02-02",
-        "Doacoes": ["cb2024"],
-        "Feedback": ["Campanha 3: Doação realizada com sucesso!"],
-        "Familiares": [
-            {
-                "NomeFamiliar": "João",
-                "TipoSanguineo": "A+",
-                "Parentesco": "Sobrinho"
-            }
-        ]
+        "Feedback": ["Campanha 3: Doação realizada com sucesso!"]
     }
 ]
