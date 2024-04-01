@@ -31,7 +31,7 @@ if($LASTEXITCODE -ne 0){
     # Elimina APIM caso tenha sido soft-deleted no passado
     az apim deletedservice purge --location $location --service-name $apim_name
 
-    echo "A criar o API Manegement $apim_name"
+    echo "A criar o API Management $apim_name"
     az apim create --name $apim_name --resource-group $resource_name --location $location --publisher-email $email --publisher-name $organization
 }
 

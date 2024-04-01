@@ -3,14 +3,12 @@
         "Nome": "Doador 1",
         "email": "joao@gmail.com",
         "TipoSanguineo": "A+",
-        "DataNascimento": "1990-01-01",
-        "Feedback": ["Campanha 1: Doação realizada com sucesso!"]
+        "DataNascimento": "1990-01-01"
     },
     {
         "Nome": "Doador 2",
         "email": "maria@gmail.com",
         "TipoSanguineo": "B+",
-        "DataNascimento": "1992-02-02",
-        "Feedback": ["Campanha 3: Doação realizada com sucesso!"]
+        "DataNascimento": "1992-02-02"
     }
 ]
