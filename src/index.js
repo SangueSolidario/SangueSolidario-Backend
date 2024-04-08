@@ -1,5 +1,6 @@
 const { CosmosClient } = require("@azure/cosmos");
 const express = require("express");
+const cors = require("cors");
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 const ReqDao = require("./db");
@@ -22,6 +23,11 @@ const dao = new ReqDao(
 // Iniciar o RequestDBDao
 dao.init();
 app.use(express.json())
+
+app.use(cors({
+    origin: '*'
+}));
+
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 // Para o APIM poder obter as rotas criadas pelo Swagger

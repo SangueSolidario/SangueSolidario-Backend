@@ -1,4 +1,4 @@
-# Flag (-github) para definir se quere-se conectar, pele primeir vez, ao Github Actions
+# Flag (-github) para definir se quere-se conectar, pele primeira vez, ao Github Actions
 param(
     [Parameter(HelpMessage="Criar Github Actions")]
     [switch]$github = $False,
