@@ -110,7 +110,7 @@ az cosmosdb sql container create --account-name $cosmos_name --database-name $db
 $primaryKey = az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv
 # Obter .env e trocar o valor da KEY pela nova KEY criada
 $content = Get-Content ".env"
-$new_content = $content -replace 'KEY=.*', "KEY=$primaryKey"
+$new_content = $content -replace 'AUTH_KEY=.*', "AUTH_KEY=$primaryKey"
 $new_content = $new_content -replace 'DB=.*', "DB=$db_name"
 $new_content | Set-Content ".env"
 
