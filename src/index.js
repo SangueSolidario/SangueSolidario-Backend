@@ -1,9 +1,11 @@
 const { CosmosClient } = require("@azure/cosmos");
 const express = require("express");
+const { check, validationResult } = require('express-validator');
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
 const ReqDao = require("./db");
 const rf = require("./utils");
+const dotenv = require("dotenv").config()
 
 // Express APP
 const app = express();
@@ -98,11 +100,16 @@ app.get("/campanhas", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.post("/campanha", async (req, res) => {
+app.post("/campanha", [
+    check("Nome", "Necessário passar um Nome").trim().notEmpty().escape(),
+    check("Coordenadas.lon", "Necessário fornecer a longitude nas Coordenadas").trim().notEmpty(),
+    check("Coordenadas.lat", "Necessário fornecer a latitude nas Coordenadas").trim().notEmpty(),
+], async (req, res) => {
     try{
-        
-        if(req.body === undefined)
-            return res.status(400).json({"mensagem": "Body vazio"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty())
+            return res.status(400).json({"mensagem": errors.array() });
 
         const {status, data } = await dao.postCampanha(req.body);
         
@@ -143,11 +150,15 @@ app.post("/campanha", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.delete("/campanha", async (req, res) => {
+app.delete("/campanha", [
+    check("name", "Necessário passar um name").trim().notEmpty().escape(),
+    check("id", "Necessário fornecer um id").trim().notEmpty().escape()
+], async (req, res) => {
     try {
+        const errors = validationResult(req);
 
-        if(req.body.name == undefined || req.body.id == undefined){
-            return res.status(400).json({"mensagem": "É necessário passar ID de doador e nome da campanha"});
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
 
         const {status, data } = await dao.deleteCampanha(req.body.name, req.body.id);
@@ -194,12 +205,15 @@ app.delete("/campanha", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.post("/doador", async (req, res) => {
+app.post("/doador", [
+    check("email", "Necessário passar um email válido").isEmail().normalizeEmail()
+], async (req, res) => {
 
     try{
-        
-        if(req.body.email === undefined || !rf.isEmail(req.body.email))
-            return res.status(400).json({"mensagem": "Email inválido"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty())
+            return res.status(400).json({"mensagem": errors.array()});
 
         const {status, data } = await dao.postDoador(req.body);
         
@@ -240,11 +254,15 @@ app.post("/doador", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.delete("/doador", async (req, res) => {
+app.delete("/doador", [
+    check("email", "Necessário passar um email válido").isEmail().normalizeEmail(),
+    check("id", "Necessário passar um id").trim().notEmpty().escape(),
+], async (req, res) => {
     try {
+        const errors = validationResult(req);
 
-        if(req.body.email == undefined || !rf.isEmail(req.body.email || req.body.id == undefined)){
-            return res.status(400).json({"mensagem": "É necessário passar ID de doador e email válido"});
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
 
         const {status, data } = await dao.deleteDoador(req.body.email, req.body.id);
@@ -286,12 +304,15 @@ app.delete("/doador", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.post("/doador/campanha", async (req, res) => {
+app.post("/doador/campanha", [
+    check("email", "Necessário passar um email válido").isEmail().normalizeEmail(),
+    check("id", "Necessário fornecer um id").trim().notEmpty().escape()
+], async (req, res) => {
     try {
-        if(req.body.id == undefined || req.body.email == undefined || !rf.isEmail(req.body.email)){
-            return res.status(400).json({
-                "mensagem": "É necessário fornecer id da campanha e email válido"
-            });
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
 
         const {status, data } = await dao.postDoadorCampanha(req.body.email, req.body.id);
@@ -331,12 +352,17 @@ app.post("/doador/campanha", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.post("/familiares", async (req, res) => {
+app.post("/familiares", [
+    check("email", "Necessário passar um email válido").isEmail().normalizeEmail()
+], async (req, res) => {
     try{
         
         // Validate if it's a valid email
-        if(req.body.email === undefined || !rf.isEmail(req.body.email))
-            return res.status(400).json({"mensagem": "Email inválido"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
+        }
 
         const {status, data}= await dao.getFamiliares(req.body.email);
 
@@ -383,11 +409,18 @@ app.post("/familiares", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.post("/familiar", async (req, res) => {
+app.post("/familiar", [
+    check("email_doador", "Necessário passar um email válido").isEmail().normalizeEmail(),
+    check("id", "Necessário passar um id para o familiar").trim().notEmpty().escape(),
+    check("NomeFamiliar", "Necessário passar um nome para o familiar").trim().notEmpty().escape(),
+    check("TipoSanguineo", "Necessário passar um tipo sanguíneo").trim().notEmpty().escape(),
+], async (req, res) => {
     try{
         
-        if(req.body.email_doador === undefined || !rf.isEmail(req.body.email_doador)){
-            return res.status(400).json({"mensagem": "É necessário passar um email de doador válido"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
         
         const {status, data} = await dao.postFamiliar(req.body);
@@ -429,7 +462,10 @@ app.post("/familiar", async (req, res) => {
 *           500:
 *               description: Erro no servidor
 */
-app.delete("/familiar", async (req, res) => {
+app.delete("/familiar", [
+    check("email_doador", "Necessário passar um email válido").isEmail().normalizeEmail(),
+    check("id", "Necessário passar um id para o familiar").trim().notEmpty().escape()
+], async (req, res) => {
     try {
 
         if(req.body.email_doador == undefined || !rf.isEmail(req.body.email_doador || req.body.id == undefined)){
