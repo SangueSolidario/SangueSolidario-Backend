@@ -114,10 +114,32 @@ az cosmosdb sql container create --account-name $cosmos_name --database-name $db
 
 # Obter a chave primária
 primaryKey=$(az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv)
+
+blobStorageAccount="myblobstorage20210941"
+
+az storage account create --name $blobStorageAccount --location $location --resource-group $resource_name \
+    --sku Standard_LRS --kind StorageV2 --access-tier hot --allow-blob-public-access true
+
+blobStorageAccountKey=$(az storage account keys list -g $resource_name -n $blobStorageAccount \
+    --query "[0].value" --output tsv)
+
+
+az storage container create --name images --account-name $blobStorageAccount --account-key $blobStorageAccountKey
+
+az webapp config appsettings set --name $webapp --resource-group $resource_name \
+  --settings AzureStorageConfig__AccountName=$blobStorageAccount \
+    AzureStorageConfig__ImageContainer=images \
+    AzureStorageConfig__AccountKey=$blobStorageAccountKey
+
+# Reiniciar webapp para garantir que as variáveis ficam definidas
+az webapp restart --name $webapp --resource-group $resource_name
+
 # Obter .env e trocar o valor da KEY pela nova KEY criada
 content=$(< ".env")
-new_content=$(echo "$content" | sed -E "s/AUTH_KEY=.*/AUTH_KEY=$primaryKey/")
-new_content=$(echo "$new_content" | sed -E "s/DB=.*/DB=$db_name/")
+new_content=$(echo "$content" | sed -E "s|AUTH_KEY=.*|AUTH_KEY=$primaryKey|")
+new_content=$(echo "$new_content" | sed -E "s|DB=.*|DB=$db_name|")
+new_content=$(echo "$new_content" | sed -E "s|BLOB_KEY=.*|BLOB_KEY=$blobStorageAccountKey|")
+new_content=$(echo "$new_content" | sed -E "s|BLOB=.*|BLOB=$blobStorageAccount|")
 echo "$new_content" > ".env"
 
 # Set KEY=VALUE do .env nas variáveis de ambiente da webapp
@@ -127,6 +149,3 @@ if [ "$createVars" = true ]; then
         az webapp config appsettings set --name $webapp --resource-group $resource_name --settings "$settingName=$settingValue"
     done < .env
 fi
-
-# Reiniciar webapp para garantir que as variáveis ficam definidas
-az webapp restart --name $webapp --resource-group $resource_name
