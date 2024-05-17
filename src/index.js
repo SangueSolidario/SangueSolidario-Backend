@@ -9,6 +9,7 @@ const ReqDao = require("./db");
 const rf = require("./utils");
 const dotenv = require("dotenv").config();
 
+// Configure Multer to store in-memory
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
 
@@ -28,7 +29,7 @@ const blobServiceClient = new BlobServiceClient(
 
 // CosmosDB
 const endpoint = process.env.HOST;
-const key = process.env.AUTH_KEY;
+const key = process.env.COSMOSKEY;
 const client = new CosmosClient({ endpoint, key });
 const dao = new ReqDao(
     client, process.env.DB, 
@@ -36,14 +37,14 @@ const dao = new ReqDao(
     process.env.FAMILIAR
 );
 
-// Iniciar o RequestDBDao
+// Init RequestDBDao
 dao.init();
 app.use(express.json())
 
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-// Para o APIM poder obter as rotas criadas pelo Swagger
+// For APIM to obtain routes cretated by Swagger
 app.get("/api/swagger.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(swaggerSpec);
@@ -129,11 +130,14 @@ app.post("/campanha", [
     try{
         const errors = validationResult(req);
 
-        const containerClient = blobServiceClient.getContainerClient("images");
-        const blockBlobClient = containerClient.getBlockBlobClient(req.file.originalname);
-        const uploadBlobResponse = await blockBlobClient.upload(req.file.buffer, req.file.size);
+        if(req.file !== undefined){
+            const containerClient = blobServiceClient.getContainerClient("images");
+            const blockBlobClient = containerClient.getBlockBlobClient(req.file.originalname);
+            const uploadBlobResponse = await blockBlobClient.upload(req.file.buffer, req.file.size);
 
-        req.body.Imagem = req.file.originalname;
+            req.body.Imagem = req.file.originalname;
+        }
+        
 
         if(!errors.isEmpty())
             return res.status(400).json({"mensagem": errors.array() });
@@ -495,8 +499,10 @@ app.delete("/familiar", [
 ], async (req, res) => {
     try {
 
-        if(req.body.email_doador == undefined || !rf.isEmail(req.body.email_doador || req.body.id == undefined)){
-            return res.status(400).json({"mensagem": "É necessário passar ID de Familiar e email_doador válido"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
 
         const {status, data } = await dao.deleteFamiliar(req.body.email_doador, req.body.id);
