@@ -133,7 +133,7 @@ app.post("/campanha", [
         if(req.file !== undefined){
             const containerClient = blobServiceClient.getContainerClient("images");
             const blockBlobClient = containerClient.getBlockBlobClient(req.file.originalname);
-            const uploadBlobResponse = await blockBlobClient.upload(req.file.buffer, req.file.size);
+            await blockBlobClient.upload(req.file.buffer, req.file.size);
 
             req.body.Imagem = req.file.originalname;
         }

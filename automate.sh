@@ -188,9 +188,7 @@ az functionapp create -g $resource_name --consumption-plan-location $location --
 
 # Pass connection string to CosmosDB
 az functionapp config appsettings set --name $functionAppName -g $resource_name \
- --settings AzureWebJobsCosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $cosmos_name -g $resource_name --query "connectionStrings[0].connectionString" --output tsv)
-
- # Pass Email connection
- commServiceConn=$(az communication list-key --name $commService --resource-group $resource_name --query "primaryConnectionString" -o tsv)
- az functionapp config appsettings set --name $functionAppName -g $resource_name --settings EMAILCONN=$commServiceConn
- 
+ --settings COSMOS_HOST=https://$cosmos_name.documents.azure.com:443/ \
+ COSMOS_KEY=$primaryKey EMAIL_CONN=$(az communication list-key --name $commService --resource-group $resource_name --query "primaryConnectionString" -o tsv) \
+ SENDER_EMAIL=$(az communication email domain list --email-service-name $emailService -g $resource_name --query "[0].fromSenderDomain" -o tsv) \
+ BLOB=$blobStorageAccount BLOB_KEY=$blobStorageAccountKey
