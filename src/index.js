@@ -1,19 +1,35 @@
 const { CosmosClient } = require("@azure/cosmos");
+const { BlobServiceClient, StorageSharedKeyCredential} = require("@azure/storage-blob");
 const express = require("express");
 const { check, validationResult } = require('express-validator');
 const swaggerUI = require("swagger-ui-express");
+const multer = require("multer");
 const swaggerSpec = require("./swagger");
 const ReqDao = require("./db");
 const rf = require("./utils");
-const dotenv = require("dotenv").config()
+const dotenv = require("dotenv").config();
+
+// Configure Multer to store in-memory
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 
 // Express APP
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Storage Account
+const storage_name = process.env.BLOB
+const storage_key = process.env.BLOB_KEY
+
+const sharedKeyCredential = new StorageSharedKeyCredential(storage_name, storage_key);
+const blobServiceClient = new BlobServiceClient(
+  `https://${storage_name}.blob.core.windows.net`,
+  sharedKeyCredential
+);
+
 // CosmosDB
 const endpoint = process.env.HOST;
-const key = process.env.AUTH_KEY;
+const key = process.env.COSMOSKEY;
 const client = new CosmosClient({ endpoint, key });
 const dao = new ReqDao(
     client, process.env.DB, 
@@ -21,14 +37,14 @@ const dao = new ReqDao(
     process.env.FAMILIAR
 );
 
-// Iniciar o RequestDBDao
+// Init RequestDBDao
 dao.init();
 app.use(express.json())
 
 
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-// Para o APIM poder obter as rotas criadas pelo Swagger
+// For APIM to obtain routes cretated by Swagger
 app.get("/api/swagger.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(swaggerSpec);
@@ -63,7 +79,7 @@ app.get("/campanhas", async (req, res) => {
 *       requestBody:
 *           required: true
 *           content:
-*               application/json:
+*               multipart/form-data:
 *                   schema:
 *                       type: object
 *                       properties:
@@ -72,8 +88,6 @@ app.get("/campanhas", async (req, res) => {
 *                           DataInicio:
 *                               type: string
 *                           DataFim:
-*                               type: string
-*                           Imagem:
 *                               type: string
 *                           Descricao:
 *                               type: string
@@ -92,6 +106,12 @@ app.get("/campanhas", async (req, res) => {
 *                               type: string
 *                           Cidade:
 *                               type: string
+*                           Imagem:
+*                               type: string
+*                               format: binary
+*                   encondig:
+*                       Imagem:
+*                           contentType: image/png, image/jpeg
 *       responses:
 *           201:
 *               description: Criado com Sucesso
@@ -101,12 +121,23 @@ app.get("/campanhas", async (req, res) => {
 *               description: Erro no servidor
 */
 app.post("/campanha", [
+    upload.single("Imagem"),
     check("Nome", "Necessário passar um Nome").trim().notEmpty().escape(),
+    check("Coordenadas").customSanitizer(val => JSON.parse(val.trim())), // Multer transformed object in String, undoing it
     check("Coordenadas.lon", "Necessário fornecer a longitude nas Coordenadas").trim().notEmpty(),
-    check("Coordenadas.lat", "Necessário fornecer a latitude nas Coordenadas").trim().notEmpty(),
+    check("Coordenadas.lat", "Necessário fornecer a latitude nas Coordenadas").trim().notEmpty()
 ], async (req, res) => {
     try{
         const errors = validationResult(req);
+
+        if(req.file !== undefined){
+            const containerClient = blobServiceClient.getContainerClient("images");
+            const blockBlobClient = containerClient.getBlockBlobClient(req.file.originalname);
+            await blockBlobClient.upload(req.file.buffer, req.file.size);
+
+            req.body.Imagem = req.file.originalname;
+        }
+        
 
         if(!errors.isEmpty())
             return res.status(400).json({"mensagem": errors.array() });
@@ -468,8 +499,10 @@ app.delete("/familiar", [
 ], async (req, res) => {
     try {
 
-        if(req.body.email_doador == undefined || !rf.isEmail(req.body.email_doador || req.body.id == undefined)){
-            return res.status(400).json({"mensagem": "É necessário passar ID de Familiar e email_doador válido"});
+        const errors = validationResult(req);
+
+        if(!errors.isEmpty()){
+            return res.status(400).json({"mensagem": errors.array()});
         }
 
         const {status, data } = await dao.deleteFamiliar(req.body.email_doador, req.body.id);

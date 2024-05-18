@@ -1,13 +1,13 @@
 [
     {
         "Nome": "Doador 1",
-        "email": "joao@gmail.com",
+        "email": "goncalo.rosa@ipcbcampus.pt",
         "TipoSanguineo": "A+",
         "DataNascimento": "1990-01-01"
     },
     {
         "Nome": "Doador 2",
-        "email": "maria@gmail.com",
+        "email": "tiagomartins1@ipcbcampus.pt",
         "TipoSanguineo": "B+",
         "DataNascimento": "1992-02-02"
     }
