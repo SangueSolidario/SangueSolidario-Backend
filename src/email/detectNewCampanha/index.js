@@ -11,14 +11,17 @@ const storage_key = process.env.BLOB_KEY
 
 const cosmosClient = new CosmosClient({ endpoint, key});
 
+
 const sharedKeyCredential = new StorageSharedKeyCredential(storage_name, storage_key);
 const blobServiceClient = new BlobServiceClient(
   `https://${storage_name}.blob.core.windows.net`,
   sharedKeyCredential
 );
 
+
 const emailClient = new EmailClient(email_conn);
 const containerClient = blobServiceClient.getContainerClient("images");
+
 
 async function streamToBuffer(readableStream) {
     return new Promise((resolve, reject) => {
@@ -53,26 +56,32 @@ module.exports = async function (context, documents) {
                     });    
                 }
                 
-                const blobClient = containerClient.getBlobClient(document.Imagem);
-                const downloadBlockBlobResponse = await blobClient.download();
-                const downloaded = (
-                    await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)
-                ).toString("base64");
-
                 const message = {
                     senderAddress: sender_email,
                     content: {
                         subject: "Nova Campanha: Sangue Solidário",
                         plainText: `Olá caro(a) doador(a)! Uma nova campanha denominada de '${document.Nome}' foi adicionada!`,
                     },
-                    recipients: recipients,
-                    attachments: [{
+                    recipients: recipients
+                };
+
+                try{
+                    const blobClient = containerClient.getBlobClient(document.Imagem);
+                    const downloadBlockBlobResponse = await blobClient.download();
+                    const downloaded = (
+                        await streamToBuffer(downloadBlockBlobResponse.readableStreamBody)
+                    ).toString("base64");
+
+                    message.attachments = [{
                         name: document.Imagem,
                         contentType: "image/jpeg",
-                        contentInBase64: downloaded.toString("base64"),
+                        contentInBase64: downloaded
                         },
-                    ],
-                };
+                    ];
+
+                } catch(err) {
+                    context.log.error(`Doesn't exist attachment: ${err.message}`);
+                }
 
                 const poller = await emailClient.beginSend(message);
                 await poller.pollUntilDone();

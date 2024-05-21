@@ -187,12 +187,13 @@ az functionapp create -g $resource_name --consumption-plan-location $location --
 
 # Pass connection string to CosmosDB
 cosmosConnStr=$(az cosmosdb keys list --name mycosmosbd1 --resource-group apibackend --type connection-strings --output json --query "connectionStrings[0].connectionString" -o tsv)
+domainEmail=$(az communication email domain list --email-service-name $emailService -g $resource_name --query "[0].fromSenderDomain" -o tsv)
 
 az functionapp config appsettings set --name $functionAppName -g $resource_name \
  --settings COSMOS_HOST=https://$cosmos_name.documents.azure.com:443/ \
  COSMOS_KEY=$primaryKey EMAIL_CONN=$(az communication list-key --name $commService --resource-group $resource_name --query "primaryConnectionString" -o tsv) \
- SENDER_EMAIL=$(az communication email domain list --email-service-name $emailService -g $resource_name --query "[0].fromSenderDomain" -o tsv) \
- BLOB=$blobStorageAccount BLOB_KEY=$blobStorageAccountKey "${cosmos_name}_DOCUMENTDB"=$cosmosConnStr
+ SENDER_EMAIL="DoNotReply@${domainEmail}" \
+ BLOB=$blobStorageAccount BLOB_KEY=$blobStorageAccountKey "${cosmos_name}_DOCUMENTDB"=$cosmosConnStr DB_ID=$db_name DOADORES_ID=doadoresContainer
 
 # Publish Function APP Trigger
 cd src/email/
