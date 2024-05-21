@@ -5,9 +5,9 @@
       "name": "documents",
       "direction": "in",
       "leaseContainerName": "leases",
-      "connection": "",
-      "databaseName": "",
-      "containerName": "",
+      "connection": "mycosmosbd1_DOCUMENTDB",
+      "databaseName": "Sangue",
+      "containerName": "containerCampanhas",
       "createLeaseContainerIfNotExists": true,
       "startFromBeginning": false
     }
