@@ -3,9 +3,9 @@ Repository containing all the server/API of the "SangueSolidario" webapp.
 
 # Deploy
 
-* The entire deployment process has been automated using the Powershell script `automate.ps1`.
+* The entire deployment process has been automated using the Powershell script `automate.ps1` or `automate.sh` if you want a Shell Script.
 
-* If this is your first time deploying or if you have deleted the previous resource group, it is important to pass the `-github` and `createVars` flag when running the script.
+* If this is your first time deploying or if you have deleted the previous resource group, it is important to pass the `-github`, `-createVars` and `-genEmail` flag when running the script.
 
 * To run the script bypassing the Windows execution policy, you can use: `powershell -ExecutionPolicy Bypass -File automate.ps1 -github -createVars`.
 
