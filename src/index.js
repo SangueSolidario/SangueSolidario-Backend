@@ -109,9 +109,6 @@ app.get("/campanhas", async (req, res) => {
 *                           Imagem:
 *                               type: string
 *                               format: binary
-*                   encondig:
-*                       Imagem:
-*                           contentType: image/png, image/jpeg
 *       responses:
 *           201:
 *               description: Criado com Sucesso

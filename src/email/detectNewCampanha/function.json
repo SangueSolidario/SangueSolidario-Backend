@@ -1,0 +1,15 @@
+{
+  "bindings": [
+    {
+      "type": "cosmosDBTrigger",
+      "name": "documents",
+      "direction": "in",
+      "leaseContainerName": "leases",
+      "connection": "mycosmosbd1_DOCUMENTDB",
+      "databaseName": "Sangue",
+      "containerName": "campanhasContainer",
+      "createLeaseContainerIfNotExists": true,
+      "startFromBeginning": false
+    }
+  ]
+}

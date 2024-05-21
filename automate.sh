@@ -117,7 +117,7 @@ az cosmosdb sql container create --account-name $cosmos_name --database-name $db
 
 az cosmosdb sql container create --account-name $cosmos_name --database-name $db_name --resource-group $resource_name --name familiaresContainer --partition-key-path /email_doador
 
-# Obter a chave primária
+# Get Cosmos Primary Key
 primaryKey=$(az cosmosdb keys list --name $cosmos_name --resource-group $resource_name --type keys --output json --query primaryMasterKey -o tsv)
 
 blobStorageAccount="myblobstorage20210941"
@@ -136,10 +136,10 @@ az webapp config appsettings set --name $webapp --resource-group $resource_name 
     AzureStorageConfig__ImageContainer=images \
     AzureStorageConfig__AccountKey=$blobStorageAccountKey
 
-# Reiniciar webapp para garantir que as variáveis ficam definidas
+# Reboot webapp 
 az webapp restart --name $webapp --resource-group $resource_name
 
-# Obter .env e trocar o valor da KEY pela nova KEY criada
+# Update .env values with new information from Azure Resources
 content=$(< ".env")
 new_content=$(echo "$content" | sed -E "s|COSMOSKEY=.*|COSMOSKEY=$primaryKey|")
 new_content=$(echo "$new_content" | sed -E "s|DB=.*|DB=$db_name|")
@@ -147,7 +147,7 @@ new_content=$(echo "$new_content" | sed -E "s|BLOB_KEY=.*|BLOB_KEY=$blobStorageA
 new_content=$(echo "$new_content" | sed -E "s|BLOB=.*|BLOB=$blobStorageAccount|")
 echo "$new_content" > ".env"
 
-# Set KEY=VALUE do .env nas variáveis de ambiente da webapp
+# Set KEY=VALUE do .env in environment variables of WebApp
 if [ "$createVars" = true ]; then
     echo "A criar variáveis de ambiente"
     while IFS='=' read -r settingName settingValue; do
@@ -175,7 +175,6 @@ if [ "$genEmail" = true ]; then
     # Get Connection String to Communication Service
     commServiceConn=$(az communication list-key --name $commService --resource-group $resource_name --query "primaryConnectionString" -o tsv)
 
-    # Obter .env e trocar o valor da KEY pela nova KEY criada
     content=$(< ".env")
     new_content=$(echo "$content" | sed -E "s|EMAILCONN=.*|EMAILCONN=$commServiceConn|")
     echo "$new_content" > ".env"
@@ -187,8 +186,15 @@ functionAppName="detectNewCampanhas"
 az functionapp create -g $resource_name --consumption-plan-location $location --runtime node --functions-version 4 --name $functionAppName --storage-account $blobStorageAccount
 
 # Pass connection string to CosmosDB
+cosmosConnStr=$(az cosmosdb keys list --name mycosmosbd1 --resource-group apibackend --type connection-strings --output json --query "connectionStrings[0].connectionString" -o tsv)
+domainEmail=$(az communication email domain list --email-service-name $emailService -g $resource_name --query "[0].fromSenderDomain" -o tsv)
+
 az functionapp config appsettings set --name $functionAppName -g $resource_name \
  --settings COSMOS_HOST=https://$cosmos_name.documents.azure.com:443/ \
  COSMOS_KEY=$primaryKey EMAIL_CONN=$(az communication list-key --name $commService --resource-group $resource_name --query "primaryConnectionString" -o tsv) \
- SENDER_EMAIL=$(az communication email domain list --email-service-name $emailService -g $resource_name --query "[0].fromSenderDomain" -o tsv) \
- BLOB=$blobStorageAccount BLOB_KEY=$blobStorageAccountKey
+ SENDER_EMAIL="DoNotReply@${domainEmail}" \
+ BLOB=$blobStorageAccount BLOB_KEY=$blobStorageAccountKey "${cosmos_name}_DOCUMENTDB"=$cosmosConnStr DB_ID=$db_name DOADORES_ID=doadoresContainer
+
+# Publish Function APP Trigger
+cd src/email/
+func azure functionapp publish $functionAppName
