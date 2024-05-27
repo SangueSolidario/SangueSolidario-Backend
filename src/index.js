@@ -439,7 +439,7 @@ app.post("/familiares", [
 */
 app.post("/familiar", [
     check("email_doador", "Necessário passar um email válido").isEmail().normalizeEmail(),
-    check("id", "Necessário passar um id para o familiar").trim().notEmpty().escape(),
+    //check("id", "Necessário passar um id para o familiar").trim().notEmpty().escape(),
     check("NomeFamiliar", "Necessário passar um nome para o familiar").trim().notEmpty().escape(),
     check("TipoSanguineo", "Necessário passar um tipo sanguíneo").trim().notEmpty().escape(),
 ], async (req, res) => {
